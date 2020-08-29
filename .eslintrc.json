@@ -24,19 +24,19 @@
         "react",
         "@typescript-eslint",
         "simple-import-sort",
-        "sort-keys-fix"
+        "sort-keys-fix",
+        "prettier"
     ],
     "rules": {
         "@typescript-eslint/ban-ts-comment": [
             "error",
             {"ts-ignore": "allow-with-description"}
         ],
-        "@typescript-eslint/brace-style": ["error", "allman"],
         "@typescript-eslint/explicit-function-return-type": "off",
         "array-bracket-spacing": ["error", "never"],
         "comma-dangle": ["error", "always-multiline"],
         "import/first": ["error"],
-        "import/newline-after-import": ["error", {"count": 2}],
+        "import/newline-after-import": ["error", {"count": 1}],
         "import/no-duplicates": "off",
         "import/no-unresolved": ["error"],
         "indent": ["error", 4, {
@@ -67,5 +67,6 @@
             {"caseSensitive": true, "natural": true}
         ],
         "space-in-parens": ["error", "never"]
-    }
+    },
+    "settings": {"import/resolver": {"typescript": {}}}
 }

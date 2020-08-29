@@ -2,6 +2,8 @@
  * IMPORTS
  */
 import React from 'react';
+
+import Routes from 'src/Routes';
 import GlobalStyles from 'src/styles/GlobalStyles';
 
 /**
@@ -11,9 +13,7 @@ function App(): JSX.Element {
     return (
         <>
             <GlobalStyles />
-            <div className="App">
-                <h1>MyApply</h1>
-            </div>
+            <Routes />
         </>
     );
 }

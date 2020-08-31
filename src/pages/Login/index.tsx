@@ -1,11 +1,15 @@
 /**
  * IMPORTS
  */
+import {notification} from 'antd';
 import React, {useEffect, useState, useRef} from 'react';
+import {useSelector} from 'react-redux';
 import {useHistory, Link} from 'react-router-dom';
 import {AiFillEye, AiFillEyeInvisible} from 'react-icons/ai';
 import {BsArrowRight} from 'react-icons/bs';
 import * as Yup from 'yup';
+
+import * as userAPI from 'src/store/modules/user/api';
 
 import Input from 'src/components/Input';
 import LogoApply from 'src/assets/logo_apply_black.png';
@@ -20,6 +24,7 @@ import * as S from 'src/pages/Login/styles';
  */
 import {FormHandles} from '@unform/core';
 import {IFormData} from 'src/pages/Login/index.d';
+import {IAppState} from 'src/store/index.d';
 
 /**
  * CODE
@@ -29,11 +34,20 @@ import {IFormData} from 'src/pages/Login/index.d';
  * I am the login page.
  */
 function Login(): JSX.Element {
+    const isAuthenticating = useSelector<IAppState, boolean>(
+        (state) => state.user.auth.isAuthenticating,
+    );
+    const isAuthenticated = useSelector<IAppState, boolean>(
+        (state) => state.user.auth.isAuthenticated,
+    );
+    const hasAuthenticateError = useSelector<IAppState, boolean>(
+        (state) => state.user.errors.hasAuthenticateError,
+    );
+
     const history = useHistory();
 
     const formRef = useRef<FormHandles>(null);
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [logged, setLogged] = useState<boolean>(false);
 
     /**
      * I handle the form submit event.
@@ -42,8 +56,6 @@ function Login(): JSX.Element {
      */
     async function handleSubmit(data: IFormData) {
         formRef.current?.setErrors({});
-
-        console.log(data);
 
         try {
             const schema = Yup.object().shape({
@@ -57,8 +69,7 @@ function Login(): JSX.Element {
                 abortEarly: false,
             });
 
-            // TODO: Authenticate within server
-            setLogged(true);
+            userAPI.login({email: data.email, password: data.password});
         } catch (err) {
             const validationErrors: Record<string, string> = {};
 
@@ -84,17 +95,34 @@ function Login(): JSX.Element {
      * I push the user to /app.
      */
     useEffect(() => {
-        if (logged) setTimeout(() => history.push('/app'), 800);
-    }, [logged, history]);
+        if (isAuthenticated) setTimeout(() => history.push('/app'), 800);
+    }, [isAuthenticated, history]);
+
+    /**
+     * I dispatch an error notification.
+     */
+    useEffect(() => {
+        if (hasAuthenticateError && !isAuthenticating) {
+            notification.error({
+                description: 'Usuário ou senha incorretos.',
+                message: 'Erro',
+                placement: 'bottomLeft',
+            });
+        }
+    }, [hasAuthenticateError, isAuthenticating]);
 
     return (
         <S.Container>
-            <S.Logo logged={logged}>
+            <S.Logo logged={isAuthenticated}>
                 <img src={LogoApply} alt="Logo Apply Black" />
             </S.Logo>
 
             <S.Content>
-                <S.Form onSubmit={handleSubmit} ref={formRef} logged={logged}>
+                <S.Form
+                    onSubmit={handleSubmit}
+                    ref={formRef}
+                    logged={isAuthenticated}
+                >
                     <S.Title>
                         <p>Bem-vindo!</p>
                         <span>
@@ -104,6 +132,7 @@ function Login(): JSX.Element {
 
                     <S.InputWrapper>
                         <Input
+                            disabled={isAuthenticating || isAuthenticated}
                             label="E-mail"
                             name="email"
                             placeholder="Digite seu e-mail"
@@ -112,6 +141,7 @@ function Login(): JSX.Element {
 
                     <S.InputWrapper>
                         <Input
+                            disabled={isAuthenticating || isAuthenticated}
                             label="Senha"
                             name="password"
                             type={showPassword ? 'text' : 'password'}
@@ -131,9 +161,16 @@ function Login(): JSX.Element {
                     <S.Footer>
                         <Link to="#">Esqueci minha senha</Link>
 
-                        <S.SubmitButton type="submit">
+                        <S.SubmitButton
+                            type="submit"
+                            disabled={isAuthenticating || isAuthenticated}
+                        >
                             ENTRAR
-                            <BsArrowRight />
+                            {isAuthenticating || isAuthenticated ? (
+                                <S.Loading />
+                            ) : (
+                                <BsArrowRight />
+                            )}
                         </S.SubmitButton>
                     </S.Footer>
                 </S.Form>

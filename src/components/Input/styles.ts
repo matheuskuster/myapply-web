@@ -9,6 +9,7 @@ import styled, {css} from 'styled-components';
 interface IContent {
     error: boolean;
     focused: boolean;
+    disabled?: boolean;
 }
 
 export const Container = styled.div`
@@ -45,6 +46,15 @@ export const Content = styled.div<IContent>`
         css`
             border-color: var(--color-warning);
             box-shadow: 0px 0px 2px 0.3px var(--color-warning);
+        `}
+
+    ${(props) =>
+        props.disabled &&
+        css`
+            border-color: none;
+            box-shadow: none;
+            background: var(--color-gray-light);
+            opacity: 0.6;
         `}
 
     input {

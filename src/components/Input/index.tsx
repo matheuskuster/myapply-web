@@ -18,7 +18,13 @@ import {IInputProps} from 'src/components/Input/index.d';
 /**
  * CODE
  */
-function Input({name, label, suffix, ...props}: IInputProps): JSX.Element {
+function Input({
+    disabled,
+    name,
+    label,
+    suffix,
+    ...props
+}: IInputProps): JSX.Element {
     const inputRef = useRef(null);
     const {fieldName, defaultValue, registerField, error} = useField(name);
     const [shouldShowError, setShouldShowError] = useState(true);
@@ -44,13 +50,18 @@ function Input({name, label, suffix, ...props}: IInputProps): JSX.Element {
         <S.Container>
             {!!label && <label htmlFor={name}>{label}</label>}
 
-            <S.Content focused={focused} error={shouldShowError && !!error}>
+            <S.Content
+                disabled={disabled}
+                error={shouldShowError && !!error}
+                focused={focused}
+            >
                 <Tooltip title={shouldShowError ? error : ''}>
                     <input
-                        ref={inputRef}
                         defaultValue={defaultValue}
-                        onFocus={() => setFocused(true)}
+                        disabled={disabled}
                         onBlur={() => setFocused(false)}
+                        onFocus={() => setFocused(true)}
+                        ref={inputRef}
                         {...props}
                     />
                 </Tooltip>

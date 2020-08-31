@@ -2,6 +2,7 @@
  * IMPORTS
  */
 import React, {useEffect} from 'react';
+import {useSelector} from 'react-redux';
 import {
     BrowserRouter as Router,
     Route,
@@ -14,6 +15,7 @@ import Login from 'src/pages/Login';
  * TYPES
  */
 import {RouteProps} from 'react-router-dom';
+import {IAppState} from 'src/store/index.d';
 
 interface IPrivateRouteProps extends RouteProps {
     children: JSX.Element;
@@ -48,10 +50,10 @@ function Routes(): JSX.Element {
  * @param props: necessary private route props
  */
 function PrivateRoute({children, ...props}: IPrivateRouteProps): JSX.Element {
+    const isAuthenticated = useSelector<IAppState, boolean>(
+        (state) => state.user.auth.isAuthenticated,
+    );
     const history = useHistory();
-
-    // TODO: authenticate behavior
-    const isAuthenticated = 1 + 1 === 2;
 
     useEffect(() => {
         if (isAuthenticated === false) {

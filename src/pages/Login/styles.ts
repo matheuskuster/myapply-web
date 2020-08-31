@@ -3,12 +3,17 @@
  */
 import styled, {css} from 'styled-components';
 import {Form as Unform} from '@unform/web';
+import {AiOutlineLoading3Quarters} from 'react-icons/ai';
 
 /**
  * TYPES
  */
 interface IAnimatedElements {
     logged: boolean;
+}
+
+interface ISubmitButton {
+    disabled: boolean;
 }
 
 /**
@@ -159,7 +164,7 @@ export const Footer = styled.div`
     }
 `;
 
-export const SubmitButton = styled.button`
+export const SubmitButton = styled.button<ISubmitButton>`
     width: 40%;
     padding: 6px 15px;
     border-radius: var(--border-radius);
@@ -172,6 +177,16 @@ export const SubmitButton = styled.button`
     justify-content: space-between;
     box-shadow: 0px 0px 2px 0.3px var(--color-orange-light);
     transition: 0.3s all ease-in-out;
+
+    ${(props) =>
+        props.disabled &&
+        css`
+            background: var(--color-white);
+            color: var(--color-orange-light);
+            box-shadow: none;
+            border: 1px solid var(--color-orange-light);
+            cursor: not-allowed;
+        `}
 
     &:hover {
         background: var(--color-white);
@@ -190,4 +205,15 @@ export const SubmitButton = styled.button`
             display: none;
         }
     }
+`;
+
+export const Loading = styled(AiOutlineLoading3Quarters)`
+    @keyframes spin {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    font-size: 18px !important;
+    animation: spin 1s linear infinite;
 `;
